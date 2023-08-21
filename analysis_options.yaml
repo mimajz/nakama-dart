@@ -15,3 +15,4 @@ linter:
     prefer_final_in_for_each: true
     prefer_final_locals: true
     prefer_single_quotes: true
+    invalid_annotation_target: false

@@ -130,7 +130,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateEmailPost(
-      body: ApiAccountEmail(
+      account: ApiAccountEmail(
         email: email,
         password: password,
         vars: vars,
@@ -192,7 +192,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateDevicePost(
-      body: ApiAccountDevice(id: deviceId, vars: vars),
+      account: ApiAccountDevice(id: deviceId, vars: vars),
       create: create,
       username: username,
     );
@@ -241,7 +241,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     bool import = false,
   }) async {
     final res = await _api.v2AccountAuthenticateFacebookPost(
-      body: ApiAccountFacebook(
+      account: ApiAccountFacebook(
         token: token,
         vars: vars,
       ),
@@ -267,7 +267,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountLinkFacebookPost(
-      body: ApiAccountFacebook(
+      account: ApiAccountFacebook(
         token: token,
         vars: vars,
       ),
@@ -301,7 +301,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateGooglePost(
-      body: ApiAccountGoogle(
+      account: ApiAccountGoogle(
         token: token,
         vars: vars,
       ),
@@ -358,7 +358,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateApplePost(
-      body: ApiAccountApple(
+      account: ApiAccountApple(
         token: token,
         vars: vars,
       ),
@@ -415,7 +415,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateFacebookinstantgamePost(
-      body: ApiAccountFacebookInstantGame(
+      account: ApiAccountFacebookInstantGame(
         signedPlayerInfo: signedPlayerInfo,
         vars: vars,
       ),
@@ -477,7 +477,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateGamecenterPost(
-      body: ApiAccountGameCenter(
+      account: ApiAccountGameCenter(
         playerId: playerId,
         bundleId: bundleId,
         timestampSeconds: timestampSeconds.toString(),
@@ -560,7 +560,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     bool import = false,
   }) async {
     final res = await _api.v2AccountAuthenticateSteamPost(
-      body: ApiAccountSteam(token: token, vars: vars),
+      account: ApiAccountSteam(token: token, vars: vars),
       create: create,
       username: username,
       $sync: import,
@@ -613,7 +613,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     Map<String, String>? vars,
   }) async {
     final res = await _api.v2AccountAuthenticateCustomPost(
-      body: ApiAccountCustom(id: id, vars: vars),
+      account: ApiAccountCustom(id: id, vars: vars),
       create: create,
       username: username,
     );
@@ -879,7 +879,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
 
     final res = await _api.v2LeaderboardLeaderboardIdPost(
         leaderboardId: leaderboardName,
-        body: WriteLeaderboardRecordRequestLeaderboardRecordWrite(
+        record: WriteLeaderboardRecordRequestLeaderboardRecordWrite(
           score: score?.toString(),
           subscore: subscore?.toString(),
           metadata: metadata,
@@ -1312,7 +1312,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
 
     final res = await _api.v2TournamentTournamentIdPost(
       tournamentId: tournamentId,
-      body: WriteTournamentRecordRequestTournamentRecordWrite(
+      record: WriteTournamentRecordRequestTournamentRecordWrite(
         metadata: metadata,
         score: score?.toString(),
         subscore: subscore?.toString(),
@@ -1347,7 +1347,7 @@ class NakamaRestApiClient extends NakamaBaseClient {
     _session = session;
 
     final res = await _api.v2RpcIdPost(
-      body: payload,
+      payload: payload,
       id: id,
     );
 

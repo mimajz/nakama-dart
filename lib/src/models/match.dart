@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:nakama/nakama.dart';
 import 'package:nakama/src/api/api.dart' as api;
@@ -11,27 +13,18 @@ class Match with _$Match {
   const Match._();
 
   const factory Match({
-    required String matchId,
+    @JsonKey(name: 'match_id') required String matchId,
     required bool authoritative,
     required String label,
-    required int size,
-    int? tickRate,
-    String? handlerName,
+    @Default(0) int size,
+    @JsonKey(name: 'tick_rate') int? tickRate,
+    @JsonKey(name: 'handler_name') String? handlerName,
+    @Default([]) List<UserPresence> presences,
   }) = _Match;
-
-  factory Match.realtime({
-    required String matchId,
-    required bool authoritative,
-    required String label,
-    required int size,
-    int? tickRate,
-    String? handlerName,
-    required List<UserPresence> presences,
-  }) = RealtimeMatch;
 
   factory Match.fromJson(Map<String, Object?> json) => _$MatchFromJson(json);
 
-  factory Match.fromDto(api.Match dto) => Match.realtime(
+  factory Match.fromDto(api.Match dto) => Match(
         matchId: dto.matchId,
         authoritative: dto.authoritative,
         handlerName: dto.handlerName,
@@ -41,7 +34,7 @@ class Match with _$Match {
         presences: [],
       );
 
-  factory Match.fromRtpb(rtpb.Match dto) => Match.realtime(
+  factory Match.fromRtpb(rtpb.Match dto) => Match(
         matchId: dto.matchId,
         authoritative: dto.authoritative,
         label: dto.label.value,

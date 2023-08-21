@@ -7,6 +7,9 @@ targets:
       - swagger_examples/**
       - $package$
     builders:
+      freezed:
+          options:
+            generic_argument_factories: true
       chopper_generator:
         options:
           header: "// Generated code - do not change"

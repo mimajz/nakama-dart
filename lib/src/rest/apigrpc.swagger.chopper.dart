@@ -7,7 +7,7 @@ part of 'apigrpc.swagger.dart';
 // **************************************************************************
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$Apigrpc extends Apigrpc {
+final class _$Apigrpc extends Apigrpc {
   _$Apigrpc([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -17,14 +17,14 @@ class _$Apigrpc extends Apigrpc {
   final definitionType = Apigrpc;
 
   @override
-  Future<Response<dynamic>> _healthcheckGet() {
+  Future<Response<Object>> _healthcheckGet() {
     final Uri $url = Uri.parse('/healthcheck');
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -39,7 +39,18 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountPut(
+  Future<Response<Object>> _v2AccountDelete() {
+    final Uri $url = Uri.parse('/v2/account');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _v2AccountPut(
       {required ApiUpdateAccountRequest? body}) {
     final Uri $url = Uri.parse('/v2/account');
     final $body = body;
@@ -49,12 +60,12 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateApplePost({
-    required ApiAccountApple? body,
+    required ApiAccountApple? account,
     bool? create,
     String? username,
   }) {
@@ -63,7 +74,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -76,7 +87,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateCustomPost({
-    required ApiAccountCustom? body,
+    required ApiAccountCustom? account,
     bool? create,
     String? username,
   }) {
@@ -85,7 +96,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -98,7 +109,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateDevicePost({
-    required ApiAccountDevice? body,
+    required ApiAccountDevice? account,
     bool? create,
     String? username,
   }) {
@@ -107,7 +118,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -120,7 +131,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateEmailPost({
-    required ApiAccountEmail? body,
+    required ApiAccountEmail? account,
     bool? create,
     String? username,
   }) {
@@ -129,7 +140,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -142,7 +153,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateFacebookPost({
-    required ApiAccountFacebook? body,
+    required ApiAccountFacebook? account,
     bool? create,
     String? username,
     bool? $sync,
@@ -153,7 +164,7 @@ class _$Apigrpc extends Apigrpc {
       'username': username,
       'sync': $sync,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -166,7 +177,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateFacebookinstantgamePost({
-    required ApiAccountFacebookInstantGame? body,
+    required ApiAccountFacebookInstantGame? account,
     bool? create,
     String? username,
   }) {
@@ -175,7 +186,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -188,7 +199,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateGamecenterPost({
-    required ApiAccountGameCenter? body,
+    required ApiAccountGameCenter? account,
     bool? create,
     String? username,
   }) {
@@ -197,7 +208,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -210,7 +221,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateGooglePost({
-    required ApiAccountGoogle? body,
+    required ApiAccountGoogle? account,
     bool? create,
     String? username,
   }) {
@@ -219,7 +230,7 @@ class _$Apigrpc extends Apigrpc {
       'create': create,
       'username': username,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -232,7 +243,7 @@ class _$Apigrpc extends Apigrpc {
 
   @override
   Future<Response<ApiSession>> _v2AccountAuthenticateSteamPost({
-    required ApiAccountSteam? body,
+    required ApiAccountSteam? account,
     bool? create,
     String? username,
     bool? $sync,
@@ -243,7 +254,7 @@ class _$Apigrpc extends Apigrpc {
       'username': username,
       'sync': $sync,
     };
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -255,7 +266,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkApplePost(
+  Future<Response<Object>> _v2AccountLinkApplePost(
       {required ApiAccountApple? body}) {
     final Uri $url = Uri.parse('/v2/account/link/apple');
     final $body = body;
@@ -265,11 +276,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkCustomPost(
+  Future<Response<Object>> _v2AccountLinkCustomPost(
       {required ApiAccountCustom? body}) {
     final Uri $url = Uri.parse('/v2/account/link/custom');
     final $body = body;
@@ -279,11 +290,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkDevicePost(
+  Future<Response<Object>> _v2AccountLinkDevicePost(
       {required ApiAccountDevice? body}) {
     final Uri $url = Uri.parse('/v2/account/link/device');
     final $body = body;
@@ -293,11 +304,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkEmailPost(
+  Future<Response<Object>> _v2AccountLinkEmailPost(
       {required ApiAccountEmail? body}) {
     final Uri $url = Uri.parse('/v2/account/link/email');
     final $body = body;
@@ -307,17 +318,17 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkFacebookPost({
-    required ApiAccountFacebook? body,
+  Future<Response<Object>> _v2AccountLinkFacebookPost({
+    required ApiAccountFacebook? account,
     bool? $sync,
   }) {
     final Uri $url = Uri.parse('/v2/account/link/facebook');
     final Map<String, dynamic> $params = <String, dynamic>{'sync': $sync};
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -325,11 +336,11 @@ class _$Apigrpc extends Apigrpc {
       body: $body,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkFacebookinstantgamePost(
+  Future<Response<Object>> _v2AccountLinkFacebookinstantgamePost(
       {required ApiAccountFacebookInstantGame? body}) {
     final Uri $url = Uri.parse('/v2/account/link/facebookinstantgame');
     final $body = body;
@@ -339,11 +350,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkGamecenterPost(
+  Future<Response<Object>> _v2AccountLinkGamecenterPost(
       {required ApiAccountGameCenter? body}) {
     final Uri $url = Uri.parse('/v2/account/link/gamecenter');
     final $body = body;
@@ -353,11 +364,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkGooglePost(
+  Future<Response<Object>> _v2AccountLinkGooglePost(
       {required ApiAccountGoogle? body}) {
     final Uri $url = Uri.parse('/v2/account/link/google');
     final $body = body;
@@ -367,11 +378,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountLinkSteamPost(
+  Future<Response<Object>> _v2AccountLinkSteamPost(
       {required ApiLinkSteamRequest? body}) {
     final Uri $url = Uri.parse('/v2/account/link/steam');
     final $body = body;
@@ -381,7 +392,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -399,7 +410,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkApplePost(
+  Future<Response<Object>> _v2AccountUnlinkApplePost(
       {required ApiAccountApple? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/apple');
     final $body = body;
@@ -409,11 +420,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkCustomPost(
+  Future<Response<Object>> _v2AccountUnlinkCustomPost(
       {required ApiAccountCustom? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/custom');
     final $body = body;
@@ -423,11 +434,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkDevicePost(
+  Future<Response<Object>> _v2AccountUnlinkDevicePost(
       {required ApiAccountDevice? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/device');
     final $body = body;
@@ -437,11 +448,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkEmailPost(
+  Future<Response<Object>> _v2AccountUnlinkEmailPost(
       {required ApiAccountEmail? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/email');
     final $body = body;
@@ -451,11 +462,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkFacebookPost(
+  Future<Response<Object>> _v2AccountUnlinkFacebookPost(
       {required ApiAccountFacebook? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/facebook');
     final $body = body;
@@ -465,11 +476,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkFacebookinstantgamePost(
+  Future<Response<Object>> _v2AccountUnlinkFacebookinstantgamePost(
       {required ApiAccountFacebookInstantGame? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/facebookinstantgame');
     final $body = body;
@@ -479,11 +490,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkGamecenterPost(
+  Future<Response<Object>> _v2AccountUnlinkGamecenterPost(
       {required ApiAccountGameCenter? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/gamecenter');
     final $body = body;
@@ -493,11 +504,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkGooglePost(
+  Future<Response<Object>> _v2AccountUnlinkGooglePost(
       {required ApiAccountGoogle? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/google');
     final $body = body;
@@ -507,11 +518,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2AccountUnlinkSteamPost(
+  Future<Response<Object>> _v2AccountUnlinkSteamPost(
       {required ApiAccountSteam? body}) {
     final Uri $url = Uri.parse('/v2/account/unlink/steam');
     final $body = body;
@@ -521,7 +532,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -547,7 +558,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2EventPost({required ApiEvent? body}) {
+  Future<Response<Object>> _v2EventPost({required ApiEvent? body}) {
     final Uri $url = Uri.parse('/v2/event');
     final $body = body;
     final Request $request = Request(
@@ -556,7 +567,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -581,7 +592,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2FriendDelete({
+  Future<Response<Object>> _v2FriendDelete({
     List<String>? ids,
     List<String>? usernames,
   }) {
@@ -596,11 +607,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2FriendPost({
+  Future<Response<Object>> _v2FriendPost({
     List<String>? ids,
     List<String>? usernames,
   }) {
@@ -615,11 +626,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2FriendBlockPost({
+  Future<Response<Object>> _v2FriendBlockPost({
     List<String>? ids,
     List<String>? usernames,
   }) {
@@ -634,17 +645,17 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2FriendFacebookPost({
-    required ApiAccountFacebook? body,
+  Future<Response<Object>> _v2FriendFacebookPost({
+    required ApiAccountFacebook? account,
     bool? reset,
   }) {
     final Uri $url = Uri.parse('/v2/friend/facebook');
     final Map<String, dynamic> $params = <String, dynamic>{'reset': reset};
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -652,17 +663,17 @@ class _$Apigrpc extends Apigrpc {
       body: $body,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2FriendSteamPost({
-    required ApiAccountSteam? body,
+  Future<Response<Object>> _v2FriendSteamPost({
+    required ApiAccountSteam? account,
     bool? reset,
   }) {
     final Uri $url = Uri.parse('/v2/friend/steam');
     final Map<String, dynamic> $params = <String, dynamic>{'reset': reset};
-    final $body = body;
+    final $body = account;
     final Request $request = Request(
       'POST',
       $url,
@@ -670,7 +681,7 @@ class _$Apigrpc extends Apigrpc {
       body: $body,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -715,18 +726,18 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdDelete({required String? groupId}) {
+  Future<Response<Object>> _v2GroupGroupIdDelete({required String? groupId}) {
     final Uri $url = Uri.parse('/v2/group/${groupId}');
     final Request $request = Request(
       'DELETE',
       $url,
       client.baseUrl,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdPut({
+  Future<Response<Object>> _v2GroupGroupIdPut({
     required String? groupId,
     required ApiUpdateGroupRequest? body,
   }) {
@@ -738,11 +749,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdAddPost({
+  Future<Response<Object>> _v2GroupGroupIdAddPost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -754,11 +765,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdBanPost({
+  Future<Response<Object>> _v2GroupGroupIdBanPost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -770,11 +781,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdDemotePost({
+  Future<Response<Object>> _v2GroupGroupIdDemotePost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -786,23 +797,22 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdJoinPost(
-      {required String? groupId}) {
+  Future<Response<Object>> _v2GroupGroupIdJoinPost({required String? groupId}) {
     final Uri $url = Uri.parse('/v2/group/${groupId}/join');
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdKickPost({
+  Future<Response<Object>> _v2GroupGroupIdKickPost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -814,11 +824,11 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdLeavePost(
+  Future<Response<Object>> _v2GroupGroupIdLeavePost(
       {required String? groupId}) {
     final Uri $url = Uri.parse('/v2/group/${groupId}/leave');
     final Request $request = Request(
@@ -826,11 +836,11 @@ class _$Apigrpc extends Apigrpc {
       $url,
       client.baseUrl,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
-  Future<Response<dynamic>> _v2GroupGroupIdPromotePost({
+  Future<Response<Object>> _v2GroupGroupIdPromotePost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -842,7 +852,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -996,7 +1006,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2LeaderboardLeaderboardIdDelete(
+  Future<Response<Object>> _v2LeaderboardLeaderboardIdDelete(
       {required String? leaderboardId}) {
     final Uri $url = Uri.parse('/v2/leaderboard/${leaderboardId}');
     final Request $request = Request(
@@ -1004,16 +1014,16 @@ class _$Apigrpc extends Apigrpc {
       $url,
       client.baseUrl,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
   Future<Response<ApiLeaderboardRecord>> _v2LeaderboardLeaderboardIdPost({
     required String? leaderboardId,
-    required WriteLeaderboardRecordRequestLeaderboardRecordWrite? body,
+    required WriteLeaderboardRecordRequestLeaderboardRecordWrite? record,
   }) {
     final Uri $url = Uri.parse('/v2/leaderboard/${leaderboardId}');
-    final $body = body;
+    final $body = record;
     final Request $request = Request(
       'POST',
       $url,
@@ -1030,12 +1040,14 @@ class _$Apigrpc extends Apigrpc {
     required String? ownerId,
     int? limit,
     String? expiry,
+    String? cursor,
   }) {
     final Uri $url =
         Uri.parse('/v2/leaderboard/${leaderboardId}/owner/${ownerId}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'limit': limit,
       'expiry': expiry,
+      'cursor': cursor,
     };
     final Request $request = Request(
       'GET',
@@ -1094,7 +1106,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2NotificationDelete({List<String>? ids}) {
+  Future<Response<Object>> _v2NotificationDelete({List<String>? ids}) {
     final Uri $url = Uri.parse('/v2/notification');
     final Map<String, dynamic> $params = <String, dynamic>{'ids': ids};
     final Request $request = Request(
@@ -1103,7 +1115,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       parameters: $params,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -1134,7 +1146,7 @@ class _$Apigrpc extends Apigrpc {
   @override
   Future<Response<ApiRpc>> _v2RpcIdPost({
     required String? id,
-    required String? body,
+    required String? payload,
     String? httpKey,
     String? httpKey$,
   }) {
@@ -1143,7 +1155,7 @@ class _$Apigrpc extends Apigrpc {
     final Map<String, String> $headers = {
       if (httpKey$ != null) 'http_key': httpKey$,
     };
-    final $body = body;
+    final $body = payload;
     final Request $request = Request(
       'POST',
       $url,
@@ -1156,7 +1168,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2SessionLogoutPost(
+  Future<Response<Object>> _v2SessionLogoutPost(
       {required ApiSessionLogoutRequest? body}) {
     final Uri $url = Uri.parse('/v2/session/logout');
     final $body = body;
@@ -1166,7 +1178,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -1198,7 +1210,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2StorageDeletePut(
+  Future<Response<Object>> _v2StorageDeletePut(
       {required ApiDeleteStorageObjectsRequest? body}) {
     final Uri $url = Uri.parse('/v2/storage/delete');
     final $body = body;
@@ -1208,7 +1220,7 @@ class _$Apigrpc extends Apigrpc {
       client.baseUrl,
       body: $body,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -1307,12 +1319,24 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
+  Future<Response<Object>> _v2TournamentTournamentIdDelete(
+      {required String? tournamentId}) {
+    final Uri $url = Uri.parse('/v2/tournament/${tournamentId}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
   Future<Response<ApiLeaderboardRecord>> _v2TournamentTournamentIdPost({
     required String? tournamentId,
-    required WriteTournamentRecordRequestTournamentRecordWrite? body,
+    required WriteTournamentRecordRequestTournamentRecordWrite? record,
   }) {
     final Uri $url = Uri.parse('/v2/tournament/${tournamentId}');
-    final $body = body;
+    final $body = record;
     final Request $request = Request(
       'POST',
       $url,
@@ -1325,10 +1349,10 @@ class _$Apigrpc extends Apigrpc {
   @override
   Future<Response<ApiLeaderboardRecord>> _v2TournamentTournamentIdPut({
     required String? tournamentId,
-    required WriteTournamentRecordRequestTournamentRecordWrite? body,
+    required WriteTournamentRecordRequestTournamentRecordWrite? record,
   }) {
     final Uri $url = Uri.parse('/v2/tournament/${tournamentId}');
-    final $body = body;
+    final $body = record;
     final Request $request = Request(
       'PUT',
       $url,
@@ -1339,7 +1363,7 @@ class _$Apigrpc extends Apigrpc {
   }
 
   @override
-  Future<Response<dynamic>> _v2TournamentTournamentIdJoinPost(
+  Future<Response<Object>> _v2TournamentTournamentIdJoinPost(
       {required String? tournamentId}) {
     final Uri $url = Uri.parse('/v2/tournament/${tournamentId}/join');
     final Request $request = Request(
@@ -1347,7 +1371,7 @@ class _$Apigrpc extends Apigrpc {
       $url,
       client.baseUrl,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Object, Object>($request);
   }
 
   @override
@@ -1357,12 +1381,14 @@ class _$Apigrpc extends Apigrpc {
     required String? ownerId,
     int? limit,
     String? expiry,
+    String? cursor,
   }) {
     final Uri $url =
         Uri.parse('/v2/tournament/${tournamentId}/owner/${ownerId}');
     final Map<String, dynamic> $params = <String, dynamic>{
       'limit': limit,
       'expiry': expiry,
+      'cursor': cursor,
     };
     final Request $request = Request(
       'GET',

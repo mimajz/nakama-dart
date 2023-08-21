@@ -8,6 +8,7 @@ import 'package:chopper/chopper.dart';
 
 import 'client_mapping.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'package:chopper/chopper.dart' as chopper;
 import 'apigrpc.enums.swagger.dart' as enums;
 export 'apigrpc.enums.swagger.dart';
@@ -23,7 +24,9 @@ part 'apigrpc.swagger.g.dart';
 abstract class Apigrpc extends ChopperService {
   static Apigrpc create({
     ChopperClient? client,
+    http.Client? httpClient,
     Authenticator? authenticator,
+    Converter? converter,
     Uri? baseUrl,
     Iterable<dynamic>? interceptors,
   }) {
@@ -33,21 +36,22 @@ abstract class Apigrpc extends ChopperService {
 
     final newClient = ChopperClient(
         services: [_$Apigrpc()],
-        converter: $JsonSerializableConverter(),
+        converter: converter ?? $JsonSerializableConverter(),
         interceptors: interceptors ?? [],
+        client: httpClient,
         authenticator: authenticator,
         baseUrl: baseUrl ?? Uri.parse('http://127.0.0.1:7350'));
     return _$Apigrpc(newClient);
   }
 
   ///A healthcheck which load balancers can use to check the service.
-  Future<chopper.Response> healthcheckGet() {
+  Future<chopper.Response<Object>> healthcheckGet() {
     return _healthcheckGet();
   }
 
   ///A healthcheck which load balancers can use to check the service.
   @Get(path: '/healthcheck')
-  Future<chopper.Response> _healthcheckGet();
+  Future<chopper.Response<Object>> _healthcheckGet();
 
   ///Fetch the current user's account.
   Future<chopper.Response<ApiAccount>> v2AccountGet() {
@@ -60,9 +64,18 @@ abstract class Apigrpc extends ChopperService {
   @Get(path: '/v2/account')
   Future<chopper.Response<ApiAccount>> _v2AccountGet();
 
+  ///Delete the current user's account.
+  Future<chopper.Response<Object>> v2AccountDelete() {
+    return _v2AccountDelete();
+  }
+
+  ///Delete the current user's account.
+  @Delete(path: '/v2/account')
+  Future<chopper.Response<Object>> _v2AccountDelete();
+
   ///Update fields in the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountPut(
+  ///@param body Update a user's account details.
+  Future<chopper.Response<Object>> v2AccountPut(
       {required ApiUpdateAccountRequest? body}) {
     generatedMapping.putIfAbsent(
         ApiUpdateAccountRequest, () => ApiUpdateAccountRequest.fromJsonFactory);
@@ -71,17 +84,17 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Update fields in the current user's account.
-  ///@param body
+  ///@param body Update a user's account details.
   @Put(path: '/v2/account')
-  Future<chopper.Response> _v2AccountPut(
+  Future<chopper.Response<Object>> _v2AccountPut(
       {@Body() required ApiUpdateAccountRequest? body});
 
   ///Authenticate a user with an Apple ID against the server.
-  ///@param body The Apple account details.
+  ///@param account The Apple account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateApplePost({
-    required ApiAccountApple? body,
+    required ApiAccountApple? account,
     bool? create,
     String? username,
   }) {
@@ -90,26 +103,26 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateApplePost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with an Apple ID against the server.
-  ///@param body The Apple account details.
+  ///@param account The Apple account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/apple')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateApplePost({
-    @Body() required ApiAccountApple? body,
+    @Body() required ApiAccountApple? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with a custom id against the server.
-  ///@param body The custom account details.
+  ///@param account The custom account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateCustomPost({
-    required ApiAccountCustom? body,
+    required ApiAccountCustom? account,
     bool? create,
     String? username,
   }) {
@@ -118,26 +131,26 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateCustomPost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with a custom id against the server.
-  ///@param body The custom account details.
+  ///@param account The custom account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/custom')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateCustomPost({
-    @Body() required ApiAccountCustom? body,
+    @Body() required ApiAccountCustom? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with a device id against the server.
-  ///@param body The device account details.
+  ///@param account The device account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateDevicePost({
-    required ApiAccountDevice? body,
+    required ApiAccountDevice? account,
     bool? create,
     String? username,
   }) {
@@ -146,26 +159,26 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateDevicePost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with a device id against the server.
-  ///@param body The device account details.
+  ///@param account The device account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/device')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateDevicePost({
-    @Body() required ApiAccountDevice? body,
+    @Body() required ApiAccountDevice? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with an email+password against the server.
-  ///@param body The email account details.
+  ///@param account The email account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateEmailPost({
-    required ApiAccountEmail? body,
+    required ApiAccountEmail? account,
     bool? create,
     String? username,
   }) {
@@ -174,27 +187,27 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateEmailPost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with an email+password against the server.
-  ///@param body The email account details.
+  ///@param account The email account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/email')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateEmailPost({
-    @Body() required ApiAccountEmail? body,
+    @Body() required ApiAccountEmail? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with a Facebook OAuth token against the server.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   ///@param sync Import Facebook friends for the user.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateFacebookPost({
-    required ApiAccountFacebook? body,
+    required ApiAccountFacebook? account,
     bool? create,
     String? username,
     bool? $sync,
@@ -204,29 +217,29 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateFacebookPost(
-        body: body, create: create, username: username, $sync: $sync);
+        account: account, create: create, username: username, $sync: $sync);
   }
 
   ///Authenticate a user with a Facebook OAuth token against the server.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   ///@param sync Import Facebook friends for the user.
   @Post(path: '/v2/account/authenticate/facebook')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateFacebookPost({
-    @Body() required ApiAccountFacebook? body,
+    @Body() required ApiAccountFacebook? account,
     @Query('create') bool? create,
     @Query('username') String? username,
     @Query('sync') bool? $sync,
   });
 
   ///Authenticate a user with a Facebook Instant Game token against the server.
-  ///@param body The Facebook Instant Game account details.
+  ///@param account The Facebook Instant Game account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>>
       v2AccountAuthenticateFacebookinstantgamePost({
-    required ApiAccountFacebookInstantGame? body,
+    required ApiAccountFacebookInstantGame? account,
     bool? create,
     String? username,
   }) {
@@ -235,27 +248,27 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateFacebookinstantgamePost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with a Facebook Instant Game token against the server.
-  ///@param body The Facebook Instant Game account details.
+  ///@param account The Facebook Instant Game account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/facebookinstantgame')
   Future<chopper.Response<ApiSession>>
       _v2AccountAuthenticateFacebookinstantgamePost({
-    @Body() required ApiAccountFacebookInstantGame? body,
+    @Body() required ApiAccountFacebookInstantGame? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with Apple's GameCenter against the server.
-  ///@param body The Game Center account details.
+  ///@param account The Game Center account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateGamecenterPost({
-    required ApiAccountGameCenter? body,
+    required ApiAccountGameCenter? account,
     bool? create,
     String? username,
   }) {
@@ -264,26 +277,26 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateGamecenterPost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with Apple's GameCenter against the server.
-  ///@param body The Game Center account details.
+  ///@param account The Game Center account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/gamecenter')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateGamecenterPost({
-    @Body() required ApiAccountGameCenter? body,
+    @Body() required ApiAccountGameCenter? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with Google against the server.
-  ///@param body The Google account details.
+  ///@param account The Google account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateGooglePost({
-    required ApiAccountGoogle? body,
+    required ApiAccountGoogle? account,
     bool? create,
     String? username,
   }) {
@@ -292,27 +305,27 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateGooglePost(
-        body: body, create: create, username: username);
+        account: account, create: create, username: username);
   }
 
   ///Authenticate a user with Google against the server.
-  ///@param body The Google account details.
+  ///@param account The Google account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   @Post(path: '/v2/account/authenticate/google')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateGooglePost({
-    @Body() required ApiAccountGoogle? body,
+    @Body() required ApiAccountGoogle? account,
     @Query('create') bool? create,
     @Query('username') String? username,
   });
 
   ///Authenticate a user with Steam against the server.
-  ///@param body The Steam account details.
+  ///@param account The Steam account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   ///@param sync Import Steam friends for the user.
   Future<chopper.Response<ApiSession>> v2AccountAuthenticateSteamPost({
-    required ApiAccountSteam? body,
+    required ApiAccountSteam? account,
     bool? create,
     String? username,
     bool? $sync,
@@ -322,25 +335,25 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(ApiSession, () => ApiSession.fromJsonFactory);
 
     return _v2AccountAuthenticateSteamPost(
-        body: body, create: create, username: username, $sync: $sync);
+        account: account, create: create, username: username, $sync: $sync);
   }
 
   ///Authenticate a user with Steam against the server.
-  ///@param body The Steam account details.
+  ///@param account The Steam account details.
   ///@param create Register the account if the user does not already exist.
   ///@param username Set the username on the account at register. Must be unique.
   ///@param sync Import Steam friends for the user.
   @Post(path: '/v2/account/authenticate/steam')
   Future<chopper.Response<ApiSession>> _v2AccountAuthenticateSteamPost({
-    @Body() required ApiAccountSteam? body,
+    @Body() required ApiAccountSteam? account,
     @Query('create') bool? create,
     @Query('username') String? username,
     @Query('sync') bool? $sync,
   });
 
   ///Add an Apple ID to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkApplePost(
+  ///@param body Send a Apple Sign In token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountLinkApplePost(
       {required ApiAccountApple? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountApple, () => ApiAccountApple.fromJsonFactory);
@@ -349,14 +362,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add an Apple ID to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Apple Sign In token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/link/apple')
-  Future<chopper.Response> _v2AccountLinkApplePost(
+  Future<chopper.Response<Object>> _v2AccountLinkApplePost(
       {@Body() required ApiAccountApple? body});
 
   ///Add a custom ID to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkCustomPost(
+  ///@param body Send a custom ID to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountLinkCustomPost(
       {required ApiAccountCustom? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountCustom, () => ApiAccountCustom.fromJsonFactory);
@@ -365,14 +378,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add a custom ID to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a custom ID to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/link/custom')
-  Future<chopper.Response> _v2AccountLinkCustomPost(
+  Future<chopper.Response<Object>> _v2AccountLinkCustomPost(
       {@Body() required ApiAccountCustom? body});
 
   ///Add a device ID to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkDevicePost(
+  ///@param body Send a device to the server. Used with authenticate/link/unlink and user.
+  Future<chopper.Response<Object>> v2AccountLinkDevicePost(
       {required ApiAccountDevice? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountDevice, () => ApiAccountDevice.fromJsonFactory);
@@ -381,14 +394,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add a device ID to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a device to the server. Used with authenticate/link/unlink and user.
   @Post(path: '/v2/account/link/device')
-  Future<chopper.Response> _v2AccountLinkDevicePost(
+  Future<chopper.Response<Object>> _v2AccountLinkDevicePost(
       {@Body() required ApiAccountDevice? body});
 
   ///Add an email+password to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkEmailPost(
+  ///@param body Send an email with password to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountLinkEmailPost(
       {required ApiAccountEmail? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountEmail, () => ApiAccountEmail.fromJsonFactory);
@@ -397,36 +410,36 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add an email+password to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send an email with password to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/link/email')
-  Future<chopper.Response> _v2AccountLinkEmailPost(
+  Future<chopper.Response<Object>> _v2AccountLinkEmailPost(
       {@Body() required ApiAccountEmail? body});
 
   ///Add Facebook to the social profiles on the current user's account.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param sync Import Facebook friends for the user.
-  Future<chopper.Response> v2AccountLinkFacebookPost({
-    required ApiAccountFacebook? body,
+  Future<chopper.Response<Object>> v2AccountLinkFacebookPost({
+    required ApiAccountFacebook? account,
     bool? $sync,
   }) {
     generatedMapping.putIfAbsent(
         ApiAccountFacebook, () => ApiAccountFacebook.fromJsonFactory);
 
-    return _v2AccountLinkFacebookPost(body: body, $sync: $sync);
+    return _v2AccountLinkFacebookPost(account: account, $sync: $sync);
   }
 
   ///Add Facebook to the social profiles on the current user's account.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param sync Import Facebook friends for the user.
   @Post(path: '/v2/account/link/facebook')
-  Future<chopper.Response> _v2AccountLinkFacebookPost({
-    @Body() required ApiAccountFacebook? body,
+  Future<chopper.Response<Object>> _v2AccountLinkFacebookPost({
+    @Body() required ApiAccountFacebook? account,
     @Query('sync') bool? $sync,
   });
 
   ///Add Facebook Instant Game to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkFacebookinstantgamePost(
+  ///@param body Send a Facebook Instant Game token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountLinkFacebookinstantgamePost(
       {required ApiAccountFacebookInstantGame? body}) {
     generatedMapping.putIfAbsent(ApiAccountFacebookInstantGame,
         () => ApiAccountFacebookInstantGame.fromJsonFactory);
@@ -435,14 +448,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add Facebook Instant Game to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Facebook Instant Game token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/link/facebookinstantgame')
-  Future<chopper.Response> _v2AccountLinkFacebookinstantgamePost(
+  Future<chopper.Response<Object>> _v2AccountLinkFacebookinstantgamePost(
       {@Body() required ApiAccountFacebookInstantGame? body});
 
   ///Add Apple's GameCenter to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkGamecenterPost(
+  ///@param body Send Apple's Game Center account credentials to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountLinkGamecenterPost(
       {required ApiAccountGameCenter? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountGameCenter, () => ApiAccountGameCenter.fromJsonFactory);
@@ -451,14 +464,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add Apple's GameCenter to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send Apple's Game Center account credentials to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/link/gamecenter')
-  Future<chopper.Response> _v2AccountLinkGamecenterPost(
+  Future<chopper.Response<Object>> _v2AccountLinkGamecenterPost(
       {@Body() required ApiAccountGameCenter? body});
 
   ///Add Google to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkGooglePost(
+  ///@param body Send a Google token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountLinkGooglePost(
       {required ApiAccountGoogle? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountGoogle, () => ApiAccountGoogle.fromJsonFactory);
@@ -467,14 +480,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add Google to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Google token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/link/google')
-  Future<chopper.Response> _v2AccountLinkGooglePost(
+  Future<chopper.Response<Object>> _v2AccountLinkGooglePost(
       {@Body() required ApiAccountGoogle? body});
 
   ///Add Steam to the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountLinkSteamPost(
+  ///@param body Link Steam to the current user's account.
+  Future<chopper.Response<Object>> v2AccountLinkSteamPost(
       {required ApiLinkSteamRequest? body}) {
     generatedMapping.putIfAbsent(
         ApiLinkSteamRequest, () => ApiLinkSteamRequest.fromJsonFactory);
@@ -483,13 +496,13 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Add Steam to the social profiles on the current user's account.
-  ///@param body
+  ///@param body Link Steam to the current user's account.
   @Post(path: '/v2/account/link/steam')
-  Future<chopper.Response> _v2AccountLinkSteamPost(
+  Future<chopper.Response<Object>> _v2AccountLinkSteamPost(
       {@Body() required ApiLinkSteamRequest? body});
 
   ///Refresh a user's session using a refresh token retrieved from a previous authentication request.
-  ///@param body
+  ///@param body Authenticate against the server with a refresh token.
   Future<chopper.Response<ApiSession>> v2AccountSessionRefreshPost(
       {required ApiSessionRefreshRequest? body}) {
     generatedMapping.putIfAbsent(ApiSessionRefreshRequest,
@@ -500,14 +513,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Refresh a user's session using a refresh token retrieved from a previous authentication request.
-  ///@param body
+  ///@param body Authenticate against the server with a refresh token.
   @Post(path: '/v2/account/session/refresh')
   Future<chopper.Response<ApiSession>> _v2AccountSessionRefreshPost(
       {@Body() required ApiSessionRefreshRequest? body});
 
   ///Remove the Apple ID from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkApplePost(
+  ///@param body Send a Apple Sign In token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkApplePost(
       {required ApiAccountApple? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountApple, () => ApiAccountApple.fromJsonFactory);
@@ -516,14 +529,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove the Apple ID from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Apple Sign In token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/apple')
-  Future<chopper.Response> _v2AccountUnlinkApplePost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkApplePost(
       {@Body() required ApiAccountApple? body});
 
   ///Remove the custom ID from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkCustomPost(
+  ///@param body Send a custom ID to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkCustomPost(
       {required ApiAccountCustom? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountCustom, () => ApiAccountCustom.fromJsonFactory);
@@ -532,14 +545,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove the custom ID from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a custom ID to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/custom')
-  Future<chopper.Response> _v2AccountUnlinkCustomPost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkCustomPost(
       {@Body() required ApiAccountCustom? body});
 
   ///Remove the device ID from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkDevicePost(
+  ///@param body Send a device to the server. Used with authenticate/link/unlink and user.
+  Future<chopper.Response<Object>> v2AccountUnlinkDevicePost(
       {required ApiAccountDevice? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountDevice, () => ApiAccountDevice.fromJsonFactory);
@@ -548,14 +561,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove the device ID from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a device to the server. Used with authenticate/link/unlink and user.
   @Post(path: '/v2/account/unlink/device')
-  Future<chopper.Response> _v2AccountUnlinkDevicePost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkDevicePost(
       {@Body() required ApiAccountDevice? body});
 
   ///Remove the email+password from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkEmailPost(
+  ///@param body Send an email with password to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkEmailPost(
       {required ApiAccountEmail? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountEmail, () => ApiAccountEmail.fromJsonFactory);
@@ -564,14 +577,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove the email+password from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send an email with password to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/email')
-  Future<chopper.Response> _v2AccountUnlinkEmailPost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkEmailPost(
       {@Body() required ApiAccountEmail? body});
 
   ///Remove Facebook from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkFacebookPost(
+  ///@param body Send a Facebook token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkFacebookPost(
       {required ApiAccountFacebook? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountFacebook, () => ApiAccountFacebook.fromJsonFactory);
@@ -580,14 +593,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove Facebook from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Facebook token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/facebook')
-  Future<chopper.Response> _v2AccountUnlinkFacebookPost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkFacebookPost(
       {@Body() required ApiAccountFacebook? body});
 
   ///Remove Facebook Instant Game profile from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkFacebookinstantgamePost(
+  ///@param body Send a Facebook Instant Game token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkFacebookinstantgamePost(
       {required ApiAccountFacebookInstantGame? body}) {
     generatedMapping.putIfAbsent(ApiAccountFacebookInstantGame,
         () => ApiAccountFacebookInstantGame.fromJsonFactory);
@@ -596,14 +609,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove Facebook Instant Game profile from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Facebook Instant Game token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/facebookinstantgame')
-  Future<chopper.Response> _v2AccountUnlinkFacebookinstantgamePost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkFacebookinstantgamePost(
       {@Body() required ApiAccountFacebookInstantGame? body});
 
   ///Remove Apple's GameCenter from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkGamecenterPost(
+  ///@param body Send Apple's Game Center account credentials to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkGamecenterPost(
       {required ApiAccountGameCenter? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountGameCenter, () => ApiAccountGameCenter.fromJsonFactory);
@@ -612,14 +625,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove Apple's GameCenter from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send Apple's Game Center account credentials to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/gamecenter')
-  Future<chopper.Response> _v2AccountUnlinkGamecenterPost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkGamecenterPost(
       {@Body() required ApiAccountGameCenter? body});
 
   ///Remove Google from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkGooglePost(
+  ///@param body Send a Google token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkGooglePost(
       {required ApiAccountGoogle? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountGoogle, () => ApiAccountGoogle.fromJsonFactory);
@@ -628,14 +641,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove Google from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Google token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/google')
-  Future<chopper.Response> _v2AccountUnlinkGooglePost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkGooglePost(
       {@Body() required ApiAccountGoogle? body});
 
   ///Remove Steam from the social profiles on the current user's account.
-  ///@param body
-  Future<chopper.Response> v2AccountUnlinkSteamPost(
+  ///@param body Send a Steam token to the server. Used with authenticate/link/unlink.
+  Future<chopper.Response<Object>> v2AccountUnlinkSteamPost(
       {required ApiAccountSteam? body}) {
     generatedMapping.putIfAbsent(
         ApiAccountSteam, () => ApiAccountSteam.fromJsonFactory);
@@ -644,9 +657,9 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Remove Steam from the social profiles on the current user's account.
-  ///@param body
+  ///@param body Send a Steam token to the server. Used with authenticate/link/unlink.
   @Post(path: '/v2/account/unlink/steam')
-  Future<chopper.Response> _v2AccountUnlinkSteamPost(
+  Future<chopper.Response<Object>> _v2AccountUnlinkSteamPost(
       {@Body() required ApiAccountSteam? body});
 
   ///List a channel's message history.
@@ -681,17 +694,18 @@ abstract class Apigrpc extends ChopperService {
   });
 
   ///Submit an event for processing in the server's registered runtime custom events handler.
-  ///@param body
-  Future<chopper.Response> v2EventPost({required ApiEvent? body}) {
+  ///@param body Represents an event to be passed through the server to registered event handlers.
+  Future<chopper.Response<Object>> v2EventPost({required ApiEvent? body}) {
     generatedMapping.putIfAbsent(ApiEvent, () => ApiEvent.fromJsonFactory);
 
     return _v2EventPost(body: body);
   }
 
   ///Submit an event for processing in the server's registered runtime custom events handler.
-  ///@param body
+  ///@param body Represents an event to be passed through the server to registered event handlers.
   @Post(path: '/v2/event')
-  Future<chopper.Response> _v2EventPost({@Body() required ApiEvent? body});
+  Future<chopper.Response<Object>> _v2EventPost(
+      {@Body() required ApiEvent? body});
 
   ///List all friends for the current user.
   ///@param limit Max number of records to return. Between 1 and 100.
@@ -722,7 +736,7 @@ abstract class Apigrpc extends ChopperService {
   ///Delete one or more users by ID or username.
   ///@param ids The account id of a user.
   ///@param usernames The account username of a user.
-  Future<chopper.Response> v2FriendDelete({
+  Future<chopper.Response<Object>> v2FriendDelete({
     List<String>? ids,
     List<String>? usernames,
   }) {
@@ -733,7 +747,7 @@ abstract class Apigrpc extends ChopperService {
   ///@param ids The account id of a user.
   ///@param usernames The account username of a user.
   @Delete(path: '/v2/friend')
-  Future<chopper.Response> _v2FriendDelete({
+  Future<chopper.Response<Object>> _v2FriendDelete({
     @Query('ids') List<String>? ids,
     @Query('usernames') List<String>? usernames,
   });
@@ -741,7 +755,7 @@ abstract class Apigrpc extends ChopperService {
   ///Add friends by ID or username to a user's account.
   ///@param ids The account id of a user.
   ///@param usernames The account username of a user.
-  Future<chopper.Response> v2FriendPost({
+  Future<chopper.Response<Object>> v2FriendPost({
     List<String>? ids,
     List<String>? usernames,
   }) {
@@ -755,7 +769,7 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/friend',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2FriendPost({
+  Future<chopper.Response<Object>> _v2FriendPost({
     @Query('ids') List<String>? ids,
     @Query('usernames') List<String>? usernames,
   });
@@ -763,7 +777,7 @@ abstract class Apigrpc extends ChopperService {
   ///Block one or more users by ID or username.
   ///@param ids The account id of a user.
   ///@param usernames The account username of a user.
-  Future<chopper.Response> v2FriendBlockPost({
+  Future<chopper.Response<Object>> v2FriendBlockPost({
     List<String>? ids,
     List<String>? usernames,
   }) {
@@ -777,52 +791,52 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/friend/block',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2FriendBlockPost({
+  Future<chopper.Response<Object>> _v2FriendBlockPost({
     @Query('ids') List<String>? ids,
     @Query('usernames') List<String>? usernames,
   });
 
   ///Import Facebook friends and add them to a user's account.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param reset Reset the current user's friends list.
-  Future<chopper.Response> v2FriendFacebookPost({
-    required ApiAccountFacebook? body,
+  Future<chopper.Response<Object>> v2FriendFacebookPost({
+    required ApiAccountFacebook? account,
     bool? reset,
   }) {
     generatedMapping.putIfAbsent(
         ApiAccountFacebook, () => ApiAccountFacebook.fromJsonFactory);
 
-    return _v2FriendFacebookPost(body: body, reset: reset);
+    return _v2FriendFacebookPost(account: account, reset: reset);
   }
 
   ///Import Facebook friends and add them to a user's account.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param reset Reset the current user's friends list.
   @Post(path: '/v2/friend/facebook')
-  Future<chopper.Response> _v2FriendFacebookPost({
-    @Body() required ApiAccountFacebook? body,
+  Future<chopper.Response<Object>> _v2FriendFacebookPost({
+    @Body() required ApiAccountFacebook? account,
     @Query('reset') bool? reset,
   });
 
   ///Import Steam friends and add them to a user's account.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param reset Reset the current user's friends list.
-  Future<chopper.Response> v2FriendSteamPost({
-    required ApiAccountSteam? body,
+  Future<chopper.Response<Object>> v2FriendSteamPost({
+    required ApiAccountSteam? account,
     bool? reset,
   }) {
     generatedMapping.putIfAbsent(
         ApiAccountSteam, () => ApiAccountSteam.fromJsonFactory);
 
-    return _v2FriendSteamPost(body: body, reset: reset);
+    return _v2FriendSteamPost(account: account, reset: reset);
   }
 
   ///Import Steam friends and add them to a user's account.
-  ///@param body The Facebook account details.
+  ///@param account The Facebook account details.
   ///@param reset Reset the current user's friends list.
   @Post(path: '/v2/friend/steam')
-  Future<chopper.Response> _v2FriendSteamPost({
-    @Body() required ApiAccountSteam? body,
+  Future<chopper.Response<Object>> _v2FriendSteamPost({
+    @Body() required ApiAccountSteam? account,
     @Query('reset') bool? reset,
   });
 
@@ -830,8 +844,8 @@ abstract class Apigrpc extends ChopperService {
   ///@param name List groups that contain this value in their names.
   ///@param cursor Optional pagination cursor.
   ///@param limit Max number of groups to return. Between 1 and 100.
-  ///@param langTag Language tag filter.
-  ///@param members Number of group members.
+  ///@param langTag Language tag filter
+  ///@param members Number of group members
   ///@param open Optional Open/Closed filter.
   Future<chopper.Response<ApiGroupList>> v2GroupGet({
     String? name,
@@ -857,8 +871,8 @@ abstract class Apigrpc extends ChopperService {
   ///@param name List groups that contain this value in their names.
   ///@param cursor Optional pagination cursor.
   ///@param limit Max number of groups to return. Between 1 and 100.
-  ///@param langTag Language tag filter.
-  ///@param members Number of group members.
+  ///@param langTag Language tag filter
+  ///@param members Number of group members
   ///@param open Optional Open/Closed filter.
   @Get(path: '/v2/group')
   Future<chopper.Response<ApiGroupList>> _v2GroupGet({
@@ -871,7 +885,7 @@ abstract class Apigrpc extends ChopperService {
   });
 
   ///Create a new group with the current user as the owner.
-  ///@param body
+  ///@param body Create a group with the current user as owner.
   Future<chopper.Response<ApiGroup>> v2GroupPost(
       {required ApiCreateGroupRequest? body}) {
     generatedMapping.putIfAbsent(
@@ -882,27 +896,28 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Create a new group with the current user as the owner.
-  ///@param body
+  ///@param body Create a group with the current user as owner.
   @Post(path: '/v2/group')
   Future<chopper.Response<ApiGroup>> _v2GroupPost(
       {@Body() required ApiCreateGroupRequest? body});
 
   ///Delete a group by ID.
   ///@param groupId The id of a group.
-  Future<chopper.Response> v2GroupGroupIdDelete({required String? groupId}) {
+  Future<chopper.Response<Object>> v2GroupGroupIdDelete(
+      {required String? groupId}) {
     return _v2GroupGroupIdDelete(groupId: groupId);
   }
 
   ///Delete a group by ID.
   ///@param groupId The id of a group.
   @Delete(path: '/v2/group/{groupId}')
-  Future<chopper.Response> _v2GroupGroupIdDelete(
+  Future<chopper.Response<Object>> _v2GroupGroupIdDelete(
       {@Path('groupId') required String? groupId});
 
   ///Update fields in a given group.
   ///@param groupId The ID of the group to update.
   ///@param body
-  Future<chopper.Response> v2GroupGroupIdPut({
+  Future<chopper.Response<Object>> v2GroupGroupIdPut({
     required String? groupId,
     required ApiUpdateGroupRequest? body,
   }) {
@@ -916,7 +931,7 @@ abstract class Apigrpc extends ChopperService {
   ///@param groupId The ID of the group to update.
   ///@param body
   @Put(path: '/v2/group/{groupId}')
-  Future<chopper.Response> _v2GroupGroupIdPut({
+  Future<chopper.Response<Object>> _v2GroupGroupIdPut({
     @Path('groupId') required String? groupId,
     @Body() required ApiUpdateGroupRequest? body,
   });
@@ -924,7 +939,7 @@ abstract class Apigrpc extends ChopperService {
   ///Add users to a group.
   ///@param groupId The group to add users to.
   ///@param userIds The users to add.
-  Future<chopper.Response> v2GroupGroupIdAddPost({
+  Future<chopper.Response<Object>> v2GroupGroupIdAddPost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -938,7 +953,7 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/add',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdAddPost({
+  Future<chopper.Response<Object>> _v2GroupGroupIdAddPost({
     @Path('groupId') required String? groupId,
     @Query('userIds') List<String>? userIds,
   });
@@ -946,7 +961,7 @@ abstract class Apigrpc extends ChopperService {
   ///Ban a set of users from a group.
   ///@param groupId The group to ban users from.
   ///@param userIds The users to ban.
-  Future<chopper.Response> v2GroupGroupIdBanPost({
+  Future<chopper.Response<Object>> v2GroupGroupIdBanPost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -960,7 +975,7 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/ban',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdBanPost({
+  Future<chopper.Response<Object>> _v2GroupGroupIdBanPost({
     @Path('groupId') required String? groupId,
     @Query('userIds') List<String>? userIds,
   });
@@ -968,7 +983,7 @@ abstract class Apigrpc extends ChopperService {
   ///Demote a set of users in a group to the next role down.
   ///@param groupId The group ID to demote in.
   ///@param userIds The users to demote.
-  Future<chopper.Response> v2GroupGroupIdDemotePost({
+  Future<chopper.Response<Object>> v2GroupGroupIdDemotePost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -982,14 +997,15 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/demote',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdDemotePost({
+  Future<chopper.Response<Object>> _v2GroupGroupIdDemotePost({
     @Path('groupId') required String? groupId,
     @Query('userIds') List<String>? userIds,
   });
 
   ///Immediately join an open group, or request to join a closed one.
   ///@param groupId The group ID to join. The group must already exist.
-  Future<chopper.Response> v2GroupGroupIdJoinPost({required String? groupId}) {
+  Future<chopper.Response<Object>> v2GroupGroupIdJoinPost(
+      {required String? groupId}) {
     return _v2GroupGroupIdJoinPost(groupId: groupId);
   }
 
@@ -999,13 +1015,13 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/join',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdJoinPost(
+  Future<chopper.Response<Object>> _v2GroupGroupIdJoinPost(
       {@Path('groupId') required String? groupId});
 
   ///Kick a set of users from a group.
   ///@param groupId The group ID to kick from.
   ///@param userIds The users to kick.
-  Future<chopper.Response> v2GroupGroupIdKickPost({
+  Future<chopper.Response<Object>> v2GroupGroupIdKickPost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -1019,14 +1035,15 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/kick',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdKickPost({
+  Future<chopper.Response<Object>> _v2GroupGroupIdKickPost({
     @Path('groupId') required String? groupId,
     @Query('userIds') List<String>? userIds,
   });
 
   ///Leave a group the user is a member of.
   ///@param groupId The group ID to leave.
-  Future<chopper.Response> v2GroupGroupIdLeavePost({required String? groupId}) {
+  Future<chopper.Response<Object>> v2GroupGroupIdLeavePost(
+      {required String? groupId}) {
     return _v2GroupGroupIdLeavePost(groupId: groupId);
   }
 
@@ -1036,13 +1053,13 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/leave',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdLeavePost(
+  Future<chopper.Response<Object>> _v2GroupGroupIdLeavePost(
       {@Path('groupId') required String? groupId});
 
   ///Promote a set of users in a group to the next role up.
   ///@param groupId The group ID to promote in.
   ///@param userIds The users to promote.
-  Future<chopper.Response> v2GroupGroupIdPromotePost({
+  Future<chopper.Response<Object>> v2GroupGroupIdPromotePost({
     required String? groupId,
     List<String>? userIds,
   }) {
@@ -1056,7 +1073,7 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/group/{groupId}/promote',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2GroupGroupIdPromotePost({
+  Future<chopper.Response<Object>> _v2GroupGroupIdPromotePost({
     @Path('groupId') required String? groupId,
     @Query('userIds') List<String>? userIds,
   });
@@ -1149,7 +1166,7 @@ abstract class Apigrpc extends ChopperService {
           {@Body() required ApiValidatePurchaseHuaweiRequest? body});
 
   ///List user's subscriptions.
-  ///@param body
+  ///@param body List user subscriptions.
   Future<chopper.Response<ApiSubscriptionList>> v2IapSubscriptionPost(
       {required ApiListSubscriptionsRequest? body}) {
     generatedMapping.putIfAbsent(ApiListSubscriptionsRequest,
@@ -1161,7 +1178,7 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///List user's subscriptions.
-  ///@param body
+  ///@param body List user subscriptions.
   @Post(path: '/v2/iap/subscription')
   Future<chopper.Response<ApiSubscriptionList>> _v2IapSubscriptionPost(
       {@Body() required ApiListSubscriptionsRequest? body});
@@ -1266,7 +1283,7 @@ abstract class Apigrpc extends ChopperService {
 
   ///Delete a leaderboard record.
   ///@param leaderboardId The leaderboard ID to delete from.
-  Future<chopper.Response> v2LeaderboardLeaderboardIdDelete(
+  Future<chopper.Response<Object>> v2LeaderboardLeaderboardIdDelete(
       {required String? leaderboardId}) {
     return _v2LeaderboardLeaderboardIdDelete(leaderboardId: leaderboardId);
   }
@@ -1274,16 +1291,16 @@ abstract class Apigrpc extends ChopperService {
   ///Delete a leaderboard record.
   ///@param leaderboardId The leaderboard ID to delete from.
   @Delete(path: '/v2/leaderboard/{leaderboardId}')
-  Future<chopper.Response> _v2LeaderboardLeaderboardIdDelete(
+  Future<chopper.Response<Object>> _v2LeaderboardLeaderboardIdDelete(
       {@Path('leaderboardId') required String? leaderboardId});
 
   ///Write a record to a leaderboard.
   ///@param leaderboardId The ID of the leaderboard to write to.
-  ///@param body Record input.
+  ///@param record Record input.
   Future<chopper.Response<ApiLeaderboardRecord>>
       v2LeaderboardLeaderboardIdPost({
     required String? leaderboardId,
-    required WriteLeaderboardRecordRequestLeaderboardRecordWrite? body,
+    required WriteLeaderboardRecordRequestLeaderboardRecordWrite? record,
   }) {
     generatedMapping.putIfAbsent(
         WriteLeaderboardRecordRequestLeaderboardRecordWrite,
@@ -1293,17 +1310,18 @@ abstract class Apigrpc extends ChopperService {
         ApiLeaderboardRecord, () => ApiLeaderboardRecord.fromJsonFactory);
 
     return _v2LeaderboardLeaderboardIdPost(
-        leaderboardId: leaderboardId, body: body);
+        leaderboardId: leaderboardId, record: record);
   }
 
   ///Write a record to a leaderboard.
   ///@param leaderboardId The ID of the leaderboard to write to.
-  ///@param body Record input.
+  ///@param record Record input.
   @Post(path: '/v2/leaderboard/{leaderboardId}')
   Future<chopper.Response<ApiLeaderboardRecord>>
       _v2LeaderboardLeaderboardIdPost({
     @Path('leaderboardId') required String? leaderboardId,
-    @Body() required WriteLeaderboardRecordRequestLeaderboardRecordWrite? body,
+    @Body()
+    required WriteLeaderboardRecordRequestLeaderboardRecordWrite? record,
   });
 
   ///List leaderboard records that belong to a user.
@@ -1311,12 +1329,14 @@ abstract class Apigrpc extends ChopperService {
   ///@param ownerId The owner to retrieve records around.
   ///@param limit Max number of records to return. Between 1 and 100.
   ///@param expiry Expiry in seconds (since epoch) to begin fetching records from.
+  ///@param cursor A next or previous page cursor.
   Future<chopper.Response<ApiLeaderboardRecordList>>
       v2LeaderboardLeaderboardIdOwnerOwnerIdGet({
     required String? leaderboardId,
     required String? ownerId,
     int? limit,
     String? expiry,
+    String? cursor,
   }) {
     generatedMapping.putIfAbsent(ApiLeaderboardRecordList,
         () => ApiLeaderboardRecordList.fromJsonFactory);
@@ -1325,7 +1345,8 @@ abstract class Apigrpc extends ChopperService {
         leaderboardId: leaderboardId,
         ownerId: ownerId,
         limit: limit,
-        expiry: expiry);
+        expiry: expiry,
+        cursor: cursor);
   }
 
   ///List leaderboard records that belong to a user.
@@ -1333,6 +1354,7 @@ abstract class Apigrpc extends ChopperService {
   ///@param ownerId The owner to retrieve records around.
   ///@param limit Max number of records to return. Between 1 and 100.
   ///@param expiry Expiry in seconds (since epoch) to begin fetching records from.
+  ///@param cursor A next or previous page cursor.
   @Get(path: '/v2/leaderboard/{leaderboardId}/owner/{ownerId}')
   Future<chopper.Response<ApiLeaderboardRecordList>>
       _v2LeaderboardLeaderboardIdOwnerOwnerIdGet({
@@ -1340,6 +1362,7 @@ abstract class Apigrpc extends ChopperService {
     @Path('ownerId') required String? ownerId,
     @Query('limit') int? limit,
     @Query('expiry') String? expiry,
+    @Query('cursor') String? cursor,
   });
 
   ///Fetch list of running matches.
@@ -1410,14 +1433,14 @@ abstract class Apigrpc extends ChopperService {
 
   ///Delete one or more notifications for the current user.
   ///@param ids The id of notifications.
-  Future<chopper.Response> v2NotificationDelete({List<String>? ids}) {
+  Future<chopper.Response<Object>> v2NotificationDelete({List<String>? ids}) {
     return _v2NotificationDelete(ids: ids);
   }
 
   ///Delete one or more notifications for the current user.
   ///@param ids The id of notifications.
   @Delete(path: '/v2/notification')
-  Future<chopper.Response> _v2NotificationDelete(
+  Future<chopper.Response<Object>> _v2NotificationDelete(
       {@Query('ids') List<String>? ids});
 
   ///Execute a Lua function on the server.
@@ -1428,12 +1451,15 @@ abstract class Apigrpc extends ChopperService {
     required String? id,
     String? payload,
     String? httpKey,
-    String? httpKey$,
+    dynamic httpKey$,
   }) {
     generatedMapping.putIfAbsent(ApiRpc, () => ApiRpc.fromJsonFactory);
 
     return _v2RpcIdGet(
-        id: id, payload: payload, httpKey: httpKey, httpKey$: httpKey$);
+        id: id,
+        payload: payload,
+        httpKey: httpKey,
+        httpKey$: httpKey$?.toString());
   }
 
   ///Execute a Lua function on the server.
@@ -1450,35 +1476,38 @@ abstract class Apigrpc extends ChopperService {
 
   ///Execute a Lua function on the server.
   ///@param id The identifier of the function.
-  ///@param body The payload of the function which must be a JSON object.
+  ///@param payload The payload of the function which must be a JSON object.
   ///@param httpKey The authentication key used when executed as a non-client HTTP request.
   Future<chopper.Response<ApiRpc>> v2RpcIdPost({
     required String? id,
-    required String? body,
+    required String? payload,
     String? httpKey,
-    String? httpKey$,
+    dynamic httpKey$,
   }) {
     generatedMapping.putIfAbsent(ApiRpc, () => ApiRpc.fromJsonFactory);
 
     return _v2RpcIdPost(
-        id: id, body: body, httpKey: httpKey, httpKey$: httpKey$);
+        id: id,
+        payload: payload,
+        httpKey: httpKey,
+        httpKey$: httpKey$?.toString());
   }
 
   ///Execute a Lua function on the server.
   ///@param id The identifier of the function.
-  ///@param body The payload of the function which must be a JSON object.
+  ///@param payload The payload of the function which must be a JSON object.
   ///@param httpKey The authentication key used when executed as a non-client HTTP request.
   @Post(path: '/v2/rpc/{id}')
   Future<chopper.Response<ApiRpc>> _v2RpcIdPost({
     @Path('id') required String? id,
-    @Body() required String? body,
+    @Body() required String? payload,
     @Query('httpKey') String? httpKey,
     @Header('http_key') String? httpKey$,
   });
 
   ///Log out a session, invalidate a refresh token, or log out all sessions/refresh tokens for a user.
-  ///@param body
-  Future<chopper.Response> v2SessionLogoutPost(
+  ///@param body Log out a session, invalidate a refresh token, or log out all sessions/refresh tokens for a user.
+  Future<chopper.Response<Object>> v2SessionLogoutPost(
       {required ApiSessionLogoutRequest? body}) {
     generatedMapping.putIfAbsent(
         ApiSessionLogoutRequest, () => ApiSessionLogoutRequest.fromJsonFactory);
@@ -1487,13 +1516,13 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Log out a session, invalidate a refresh token, or log out all sessions/refresh tokens for a user.
-  ///@param body
+  ///@param body Log out a session, invalidate a refresh token, or log out all sessions/refresh tokens for a user.
   @Post(path: '/v2/session/logout')
-  Future<chopper.Response> _v2SessionLogoutPost(
+  Future<chopper.Response<Object>> _v2SessionLogoutPost(
       {@Body() required ApiSessionLogoutRequest? body});
 
   ///Get storage objects.
-  ///@param body
+  ///@param body Batch get storage objects.
   Future<chopper.Response<ApiStorageObjects>> v2StoragePost(
       {required ApiReadStorageObjectsRequest? body}) {
     generatedMapping.putIfAbsent(ApiReadStorageObjectsRequest,
@@ -1505,13 +1534,13 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Get storage objects.
-  ///@param body
+  ///@param body Batch get storage objects.
   @Post(path: '/v2/storage')
   Future<chopper.Response<ApiStorageObjects>> _v2StoragePost(
       {@Body() required ApiReadStorageObjectsRequest? body});
 
   ///Write objects into the storage engine.
-  ///@param body
+  ///@param body Write objects to the storage engine.
   Future<chopper.Response<ApiStorageObjectAcks>> v2StoragePut(
       {required ApiWriteStorageObjectsRequest? body}) {
     generatedMapping.putIfAbsent(ApiWriteStorageObjectsRequest,
@@ -1523,14 +1552,14 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Write objects into the storage engine.
-  ///@param body
+  ///@param body Write objects to the storage engine.
   @Put(path: '/v2/storage')
   Future<chopper.Response<ApiStorageObjectAcks>> _v2StoragePut(
       {@Body() required ApiWriteStorageObjectsRequest? body});
 
   ///Delete one or more objects by ID or username.
-  ///@param body
-  Future<chopper.Response> v2StorageDeletePut(
+  ///@param body Batch delete storage objects.
+  Future<chopper.Response<Object>> v2StorageDeletePut(
       {required ApiDeleteStorageObjectsRequest? body}) {
     generatedMapping.putIfAbsent(ApiDeleteStorageObjectsRequest,
         () => ApiDeleteStorageObjectsRequest.fromJsonFactory);
@@ -1539,9 +1568,9 @@ abstract class Apigrpc extends ChopperService {
   }
 
   ///Delete one or more objects by ID or username.
-  ///@param body
+  ///@param body Batch delete storage objects.
   @Put(path: '/v2/storage/delete')
-  Future<chopper.Response> _v2StorageDeletePut(
+  Future<chopper.Response<Object>> _v2StorageDeletePut(
       {@Body() required ApiDeleteStorageObjectsRequest? body});
 
   ///List publicly readable storage objects in a given collection.
@@ -1691,12 +1720,25 @@ abstract class Apigrpc extends ChopperService {
     @Query('expiry') String? expiry,
   });
 
+  ///Delete a tournament record.
+  ///@param tournamentId The tournament ID to delete from.
+  Future<chopper.Response<Object>> v2TournamentTournamentIdDelete(
+      {required String? tournamentId}) {
+    return _v2TournamentTournamentIdDelete(tournamentId: tournamentId);
+  }
+
+  ///Delete a tournament record.
+  ///@param tournamentId The tournament ID to delete from.
+  @Delete(path: '/v2/tournament/{tournamentId}')
+  Future<chopper.Response<Object>> _v2TournamentTournamentIdDelete(
+      {@Path('tournamentId') required String? tournamentId});
+
   ///Write a record to a tournament.
   ///@param tournamentId The tournament ID to write the record for.
-  ///@param body Record input.
+  ///@param record Record input.
   Future<chopper.Response<ApiLeaderboardRecord>> v2TournamentTournamentIdPost({
     required String? tournamentId,
-    required WriteTournamentRecordRequestTournamentRecordWrite? body,
+    required WriteTournamentRecordRequestTournamentRecordWrite? record,
   }) {
     generatedMapping.putIfAbsent(
         WriteTournamentRecordRequestTournamentRecordWrite,
@@ -1706,24 +1748,24 @@ abstract class Apigrpc extends ChopperService {
         ApiLeaderboardRecord, () => ApiLeaderboardRecord.fromJsonFactory);
 
     return _v2TournamentTournamentIdPost(
-        tournamentId: tournamentId, body: body);
+        tournamentId: tournamentId, record: record);
   }
 
   ///Write a record to a tournament.
   ///@param tournamentId The tournament ID to write the record for.
-  ///@param body Record input.
+  ///@param record Record input.
   @Post(path: '/v2/tournament/{tournamentId}')
   Future<chopper.Response<ApiLeaderboardRecord>> _v2TournamentTournamentIdPost({
     @Path('tournamentId') required String? tournamentId,
-    @Body() required WriteTournamentRecordRequestTournamentRecordWrite? body,
+    @Body() required WriteTournamentRecordRequestTournamentRecordWrite? record,
   });
 
   ///Write a record to a tournament.
   ///@param tournamentId The tournament ID to write the record for.
-  ///@param body Record input.
+  ///@param record Record input.
   Future<chopper.Response<ApiLeaderboardRecord>> v2TournamentTournamentIdPut({
     required String? tournamentId,
-    required WriteTournamentRecordRequestTournamentRecordWrite? body,
+    required WriteTournamentRecordRequestTournamentRecordWrite? record,
   }) {
     generatedMapping.putIfAbsent(
         WriteTournamentRecordRequestTournamentRecordWrite,
@@ -1732,21 +1774,22 @@ abstract class Apigrpc extends ChopperService {
     generatedMapping.putIfAbsent(
         ApiLeaderboardRecord, () => ApiLeaderboardRecord.fromJsonFactory);
 
-    return _v2TournamentTournamentIdPut(tournamentId: tournamentId, body: body);
+    return _v2TournamentTournamentIdPut(
+        tournamentId: tournamentId, record: record);
   }
 
   ///Write a record to a tournament.
   ///@param tournamentId The tournament ID to write the record for.
-  ///@param body Record input.
+  ///@param record Record input.
   @Put(path: '/v2/tournament/{tournamentId}')
   Future<chopper.Response<ApiLeaderboardRecord>> _v2TournamentTournamentIdPut({
     @Path('tournamentId') required String? tournamentId,
-    @Body() required WriteTournamentRecordRequestTournamentRecordWrite? body,
+    @Body() required WriteTournamentRecordRequestTournamentRecordWrite? record,
   });
 
   ///Attempt to join an open and running tournament.
   ///@param tournamentId The ID of the tournament to join. The tournament must already exist.
-  Future<chopper.Response> v2TournamentTournamentIdJoinPost(
+  Future<chopper.Response<Object>> v2TournamentTournamentIdJoinPost(
       {required String? tournamentId}) {
     return _v2TournamentTournamentIdJoinPost(tournamentId: tournamentId);
   }
@@ -1757,7 +1800,7 @@ abstract class Apigrpc extends ChopperService {
     path: '/v2/tournament/{tournamentId}/join',
     optionalBody: true,
   )
-  Future<chopper.Response> _v2TournamentTournamentIdJoinPost(
+  Future<chopper.Response<Object>> _v2TournamentTournamentIdJoinPost(
       {@Path('tournamentId') required String? tournamentId});
 
   ///List tournament records for a given owner.
@@ -1765,12 +1808,14 @@ abstract class Apigrpc extends ChopperService {
   ///@param ownerId The owner to retrieve records around.
   ///@param limit Max number of records to return. Between 1 and 100.
   ///@param expiry Expiry in seconds (since epoch) to begin fetching records from.
+  ///@param cursor A next or previous page cursor.
   Future<chopper.Response<ApiTournamentRecordList>>
       v2TournamentTournamentIdOwnerOwnerIdGet({
     required String? tournamentId,
     required String? ownerId,
     int? limit,
     String? expiry,
+    String? cursor,
   }) {
     generatedMapping.putIfAbsent(
         ApiTournamentRecordList, () => ApiTournamentRecordList.fromJsonFactory);
@@ -1779,7 +1824,8 @@ abstract class Apigrpc extends ChopperService {
         tournamentId: tournamentId,
         ownerId: ownerId,
         limit: limit,
-        expiry: expiry);
+        expiry: expiry,
+        cursor: cursor);
   }
 
   ///List tournament records for a given owner.
@@ -1787,6 +1833,7 @@ abstract class Apigrpc extends ChopperService {
   ///@param ownerId The owner to retrieve records around.
   ///@param limit Max number of records to return. Between 1 and 100.
   ///@param expiry Expiry in seconds (since epoch) to begin fetching records from.
+  ///@param cursor A next or previous page cursor.
   @Get(path: '/v2/tournament/{tournamentId}/owner/{ownerId}')
   Future<chopper.Response<ApiTournamentRecordList>>
       _v2TournamentTournamentIdOwnerOwnerIdGet({
@@ -1794,6 +1841,7 @@ abstract class Apigrpc extends ChopperService {
     @Path('ownerId') required String? ownerId,
     @Query('limit') int? limit,
     @Query('expiry') String? expiry,
+    @Query('cursor') String? cursor,
   });
 
   ///Fetch zero or more users by ID and/or username.
@@ -3946,6 +3994,7 @@ class ApiLeaderboardRecordList {
     this.ownerRecords,
     this.nextCursor,
     this.prevCursor,
+    this.rankCount,
   });
 
   factory ApiLeaderboardRecordList.fromJson(Map<String, dynamic> json) =>
@@ -3968,6 +4017,8 @@ class ApiLeaderboardRecordList {
   final String? nextCursor;
   @JsonKey(name: 'prevCursor', includeIfNull: true)
   final String? prevCursor;
+  @JsonKey(name: 'rankCount', includeIfNull: true)
+  final String? rankCount;
   static const fromJsonFactory = _$ApiLeaderboardRecordListFromJson;
 
   @override
@@ -3985,7 +4036,10 @@ class ApiLeaderboardRecordList {
                     .equals(other.nextCursor, nextCursor)) &&
             (identical(other.prevCursor, prevCursor) ||
                 const DeepCollectionEquality()
-                    .equals(other.prevCursor, prevCursor)));
+                    .equals(other.prevCursor, prevCursor)) &&
+            (identical(other.rankCount, rankCount) ||
+                const DeepCollectionEquality()
+                    .equals(other.rankCount, rankCount)));
   }
 
   @override
@@ -3997,6 +4051,7 @@ class ApiLeaderboardRecordList {
       const DeepCollectionEquality().hash(ownerRecords) ^
       const DeepCollectionEquality().hash(nextCursor) ^
       const DeepCollectionEquality().hash(prevCursor) ^
+      const DeepCollectionEquality().hash(rankCount) ^
       runtimeType.hashCode;
 }
 
@@ -4005,25 +4060,29 @@ extension $ApiLeaderboardRecordListExtension on ApiLeaderboardRecordList {
       {List<ApiLeaderboardRecord>? records,
       List<ApiLeaderboardRecord>? ownerRecords,
       String? nextCursor,
-      String? prevCursor}) {
+      String? prevCursor,
+      String? rankCount}) {
     return ApiLeaderboardRecordList(
         records: records ?? this.records,
         ownerRecords: ownerRecords ?? this.ownerRecords,
         nextCursor: nextCursor ?? this.nextCursor,
-        prevCursor: prevCursor ?? this.prevCursor);
+        prevCursor: prevCursor ?? this.prevCursor,
+        rankCount: rankCount ?? this.rankCount);
   }
 
   ApiLeaderboardRecordList copyWithWrapped(
       {Wrapped<List<ApiLeaderboardRecord>?>? records,
       Wrapped<List<ApiLeaderboardRecord>?>? ownerRecords,
       Wrapped<String?>? nextCursor,
-      Wrapped<String?>? prevCursor}) {
+      Wrapped<String?>? prevCursor,
+      Wrapped<String?>? rankCount}) {
     return ApiLeaderboardRecordList(
         records: (records != null ? records.value : this.records),
         ownerRecords:
             (ownerRecords != null ? ownerRecords.value : this.ownerRecords),
         nextCursor: (nextCursor != null ? nextCursor.value : this.nextCursor),
-        prevCursor: (prevCursor != null ? prevCursor.value : this.prevCursor));
+        prevCursor: (prevCursor != null ? prevCursor.value : this.prevCursor),
+        rankCount: (rankCount != null ? rankCount.value : this.rankCount));
   }
 }
 
@@ -4151,7 +4210,7 @@ class ApiMatch {
   static const toJsonFactory = _$ApiMatchToJson;
   Map<String, dynamic> toJson() => _$ApiMatchToJson(this);
 
-  @JsonKey(name: 'matchId', includeIfNull: true)
+  @JsonKey(name: 'match_id', includeIfNull: true)
   final String? matchId;
   @JsonKey(name: 'authoritative', includeIfNull: true)
   final bool? authoritative;
@@ -4159,9 +4218,9 @@ class ApiMatch {
   final String? label;
   @JsonKey(name: 'size', includeIfNull: true)
   final int? size;
-  @JsonKey(name: 'tickRate', includeIfNull: true)
+  @JsonKey(name: 'tick_rate', includeIfNull: true)
   final int? tickRate;
-  @JsonKey(name: 'handlerName', includeIfNull: true)
+  @JsonKey(name: 'handler_name', includeIfNull: true)
   final String? handlerName;
   static const fromJsonFactory = _$ApiMatchFromJson;
 
@@ -5268,6 +5327,7 @@ class ApiTournament {
     this.startActive,
     this.prevReset,
     this.$operator,
+    this.authoritative,
   });
 
   factory ApiTournament.fromJson(Map<String, dynamic> json) =>
@@ -5319,6 +5379,8 @@ class ApiTournament {
     fromJson: apiOperatorFromJson,
   )
   final enums.ApiOperator? $operator;
+  @JsonKey(name: 'authoritative', includeIfNull: true)
+  final bool? authoritative;
   static const fromJsonFactory = _$ApiTournamentFromJson;
 
   @override
@@ -5378,7 +5440,10 @@ class ApiTournament {
                     .equals(other.prevReset, prevReset)) &&
             (identical(other.$operator, $operator) ||
                 const DeepCollectionEquality()
-                    .equals(other.$operator, $operator)));
+                    .equals(other.$operator, $operator)) &&
+            (identical(other.authoritative, authoritative) ||
+                const DeepCollectionEquality()
+                    .equals(other.authoritative, authoritative)));
   }
 
   @override
@@ -5405,6 +5470,7 @@ class ApiTournament {
       const DeepCollectionEquality().hash(startActive) ^
       const DeepCollectionEquality().hash(prevReset) ^
       const DeepCollectionEquality().hash($operator) ^
+      const DeepCollectionEquality().hash(authoritative) ^
       runtimeType.hashCode;
 }
 
@@ -5428,7 +5494,8 @@ extension $ApiTournamentExtension on ApiTournament {
       int? duration,
       int? startActive,
       int? prevReset,
-      enums.ApiOperator? $operator}) {
+      enums.ApiOperator? $operator,
+      bool? authoritative}) {
     return ApiTournament(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -5448,7 +5515,8 @@ extension $ApiTournamentExtension on ApiTournament {
         duration: duration ?? this.duration,
         startActive: startActive ?? this.startActive,
         prevReset: prevReset ?? this.prevReset,
-        $operator: $operator ?? this.$operator);
+        $operator: $operator ?? this.$operator,
+        authoritative: authoritative ?? this.authoritative);
   }
 
   ApiTournament copyWithWrapped(
@@ -5470,7 +5538,8 @@ extension $ApiTournamentExtension on ApiTournament {
       Wrapped<int?>? duration,
       Wrapped<int?>? startActive,
       Wrapped<int?>? prevReset,
-      Wrapped<enums.ApiOperator?>? $operator}) {
+      Wrapped<enums.ApiOperator?>? $operator,
+      Wrapped<bool?>? authoritative}) {
     return ApiTournament(
         id: (id != null ? id.value : this.id),
         title: (title != null ? title.value : this.title),
@@ -5493,7 +5562,9 @@ extension $ApiTournamentExtension on ApiTournament {
         startActive:
             (startActive != null ? startActive.value : this.startActive),
         prevReset: (prevReset != null ? prevReset.value : this.prevReset),
-        $operator: ($operator != null ? $operator.value : this.$operator));
+        $operator: ($operator != null ? $operator.value : this.$operator),
+        authoritative:
+            (authoritative != null ? authoritative.value : this.authoritative));
   }
 }
 
@@ -5562,6 +5633,7 @@ class ApiTournamentRecordList {
     this.ownerRecords,
     this.nextCursor,
     this.prevCursor,
+    this.rankCount,
   });
 
   factory ApiTournamentRecordList.fromJson(Map<String, dynamic> json) =>
@@ -5584,6 +5656,8 @@ class ApiTournamentRecordList {
   final String? nextCursor;
   @JsonKey(name: 'prevCursor', includeIfNull: true)
   final String? prevCursor;
+  @JsonKey(name: 'rankCount', includeIfNull: true)
+  final String? rankCount;
   static const fromJsonFactory = _$ApiTournamentRecordListFromJson;
 
   @override
@@ -5601,7 +5675,10 @@ class ApiTournamentRecordList {
                     .equals(other.nextCursor, nextCursor)) &&
             (identical(other.prevCursor, prevCursor) ||
                 const DeepCollectionEquality()
-                    .equals(other.prevCursor, prevCursor)));
+                    .equals(other.prevCursor, prevCursor)) &&
+            (identical(other.rankCount, rankCount) ||
+                const DeepCollectionEquality()
+                    .equals(other.rankCount, rankCount)));
   }
 
   @override
@@ -5613,6 +5690,7 @@ class ApiTournamentRecordList {
       const DeepCollectionEquality().hash(ownerRecords) ^
       const DeepCollectionEquality().hash(nextCursor) ^
       const DeepCollectionEquality().hash(prevCursor) ^
+      const DeepCollectionEquality().hash(rankCount) ^
       runtimeType.hashCode;
 }
 
@@ -5621,25 +5699,29 @@ extension $ApiTournamentRecordListExtension on ApiTournamentRecordList {
       {List<ApiLeaderboardRecord>? records,
       List<ApiLeaderboardRecord>? ownerRecords,
       String? nextCursor,
-      String? prevCursor}) {
+      String? prevCursor,
+      String? rankCount}) {
     return ApiTournamentRecordList(
         records: records ?? this.records,
         ownerRecords: ownerRecords ?? this.ownerRecords,
         nextCursor: nextCursor ?? this.nextCursor,
-        prevCursor: prevCursor ?? this.prevCursor);
+        prevCursor: prevCursor ?? this.prevCursor,
+        rankCount: rankCount ?? this.rankCount);
   }
 
   ApiTournamentRecordList copyWithWrapped(
       {Wrapped<List<ApiLeaderboardRecord>?>? records,
       Wrapped<List<ApiLeaderboardRecord>?>? ownerRecords,
       Wrapped<String?>? nextCursor,
-      Wrapped<String?>? prevCursor}) {
+      Wrapped<String?>? prevCursor,
+      Wrapped<String?>? rankCount}) {
     return ApiTournamentRecordList(
         records: (records != null ? records.value : this.records),
         ownerRecords:
             (ownerRecords != null ? ownerRecords.value : this.ownerRecords),
         nextCursor: (nextCursor != null ? nextCursor.value : this.nextCursor),
-        prevCursor: (prevCursor != null ? prevCursor.value : this.prevCursor));
+        prevCursor: (prevCursor != null ? prevCursor.value : this.prevCursor),
+        rankCount: (rankCount != null ? rankCount.value : this.rankCount));
   }
 }
 
@@ -6596,12 +6678,14 @@ extension $ApiValidateSubscriptionResponseExtension
 @JsonSerializable(explicitToJson: true)
 class ApiValidatedPurchase {
   ApiValidatedPurchase({
+    this.userId,
     this.productId,
     this.transactionId,
     this.store,
     this.purchaseTime,
     this.createTime,
     this.updateTime,
+    this.refundTime,
     this.providerResponse,
     this.environment,
     this.seenBefore,
@@ -6613,6 +6697,8 @@ class ApiValidatedPurchase {
   static const toJsonFactory = _$ApiValidatedPurchaseToJson;
   Map<String, dynamic> toJson() => _$ApiValidatedPurchaseToJson(this);
 
+  @JsonKey(name: 'userId', includeIfNull: true)
+  final String? userId;
   @JsonKey(name: 'productId', includeIfNull: true)
   final String? productId;
   @JsonKey(name: 'transactionId', includeIfNull: true)
@@ -6630,6 +6716,8 @@ class ApiValidatedPurchase {
   final DateTime? createTime;
   @JsonKey(name: 'updateTime', includeIfNull: true)
   final DateTime? updateTime;
+  @JsonKey(name: 'refundTime', includeIfNull: true)
+  final DateTime? refundTime;
   @JsonKey(name: 'providerResponse', includeIfNull: true)
   final String? providerResponse;
   @JsonKey(
@@ -6647,6 +6735,8 @@ class ApiValidatedPurchase {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is ApiValidatedPurchase &&
+            (identical(other.userId, userId) ||
+                const DeepCollectionEquality().equals(other.userId, userId)) &&
             (identical(other.productId, productId) ||
                 const DeepCollectionEquality()
                     .equals(other.productId, productId)) &&
@@ -6664,6 +6754,9 @@ class ApiValidatedPurchase {
             (identical(other.updateTime, updateTime) ||
                 const DeepCollectionEquality()
                     .equals(other.updateTime, updateTime)) &&
+            (identical(other.refundTime, refundTime) ||
+                const DeepCollectionEquality()
+                    .equals(other.refundTime, refundTime)) &&
             (identical(other.providerResponse, providerResponse) ||
                 const DeepCollectionEquality()
                     .equals(other.providerResponse, providerResponse)) &&
@@ -6680,12 +6773,14 @@ class ApiValidatedPurchase {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(userId) ^
       const DeepCollectionEquality().hash(productId) ^
       const DeepCollectionEquality().hash(transactionId) ^
       const DeepCollectionEquality().hash(store) ^
       const DeepCollectionEquality().hash(purchaseTime) ^
       const DeepCollectionEquality().hash(createTime) ^
       const DeepCollectionEquality().hash(updateTime) ^
+      const DeepCollectionEquality().hash(refundTime) ^
       const DeepCollectionEquality().hash(providerResponse) ^
       const DeepCollectionEquality().hash(environment) ^
       const DeepCollectionEquality().hash(seenBefore) ^
@@ -6694,38 +6789,45 @@ class ApiValidatedPurchase {
 
 extension $ApiValidatedPurchaseExtension on ApiValidatedPurchase {
   ApiValidatedPurchase copyWith(
-      {String? productId,
+      {String? userId,
+      String? productId,
       String? transactionId,
       enums.ApiStoreProvider? store,
       DateTime? purchaseTime,
       DateTime? createTime,
       DateTime? updateTime,
+      DateTime? refundTime,
       String? providerResponse,
       enums.ApiStoreEnvironment? environment,
       bool? seenBefore}) {
     return ApiValidatedPurchase(
+        userId: userId ?? this.userId,
         productId: productId ?? this.productId,
         transactionId: transactionId ?? this.transactionId,
         store: store ?? this.store,
         purchaseTime: purchaseTime ?? this.purchaseTime,
         createTime: createTime ?? this.createTime,
         updateTime: updateTime ?? this.updateTime,
+        refundTime: refundTime ?? this.refundTime,
         providerResponse: providerResponse ?? this.providerResponse,
         environment: environment ?? this.environment,
         seenBefore: seenBefore ?? this.seenBefore);
   }
 
   ApiValidatedPurchase copyWithWrapped(
-      {Wrapped<String?>? productId,
+      {Wrapped<String?>? userId,
+      Wrapped<String?>? productId,
       Wrapped<String?>? transactionId,
       Wrapped<enums.ApiStoreProvider?>? store,
       Wrapped<DateTime?>? purchaseTime,
       Wrapped<DateTime?>? createTime,
       Wrapped<DateTime?>? updateTime,
+      Wrapped<DateTime?>? refundTime,
       Wrapped<String?>? providerResponse,
       Wrapped<enums.ApiStoreEnvironment?>? environment,
       Wrapped<bool?>? seenBefore}) {
     return ApiValidatedPurchase(
+        userId: (userId != null ? userId.value : this.userId),
         productId: (productId != null ? productId.value : this.productId),
         transactionId:
             (transactionId != null ? transactionId.value : this.transactionId),
@@ -6734,6 +6836,7 @@ extension $ApiValidatedPurchaseExtension on ApiValidatedPurchase {
             (purchaseTime != null ? purchaseTime.value : this.purchaseTime),
         createTime: (createTime != null ? createTime.value : this.createTime),
         updateTime: (updateTime != null ? updateTime.value : this.updateTime),
+        refundTime: (refundTime != null ? refundTime.value : this.refundTime),
         providerResponse: (providerResponse != null
             ? providerResponse.value
             : this.providerResponse),
@@ -6746,6 +6849,7 @@ extension $ApiValidatedPurchaseExtension on ApiValidatedPurchase {
 @JsonSerializable(explicitToJson: true)
 class ApiValidatedSubscription {
   ApiValidatedSubscription({
+    this.userId,
     this.productId,
     this.originalTransactionId,
     this.store,
@@ -6754,6 +6858,9 @@ class ApiValidatedSubscription {
     this.updateTime,
     this.environment,
     this.expiryTime,
+    this.refundTime,
+    this.providerResponse,
+    this.providerNotification,
     this.active,
   });
 
@@ -6763,6 +6870,8 @@ class ApiValidatedSubscription {
   static const toJsonFactory = _$ApiValidatedSubscriptionToJson;
   Map<String, dynamic> toJson() => _$ApiValidatedSubscriptionToJson(this);
 
+  @JsonKey(name: 'userId', includeIfNull: true)
+  final String? userId;
   @JsonKey(name: 'productId', includeIfNull: true)
   final String? productId;
   @JsonKey(name: 'originalTransactionId', includeIfNull: true)
@@ -6789,6 +6898,12 @@ class ApiValidatedSubscription {
   final enums.ApiStoreEnvironment? environment;
   @JsonKey(name: 'expiryTime', includeIfNull: true)
   final DateTime? expiryTime;
+  @JsonKey(name: 'refundTime', includeIfNull: true)
+  final DateTime? refundTime;
+  @JsonKey(name: 'providerResponse', includeIfNull: true)
+  final String? providerResponse;
+  @JsonKey(name: 'providerNotification', includeIfNull: true)
+  final String? providerNotification;
   @JsonKey(name: 'active', includeIfNull: true)
   final bool? active;
   static const fromJsonFactory = _$ApiValidatedSubscriptionFromJson;
@@ -6797,6 +6912,8 @@ class ApiValidatedSubscription {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is ApiValidatedSubscription &&
+            (identical(other.userId, userId) ||
+                const DeepCollectionEquality().equals(other.userId, userId)) &&
             (identical(other.productId, productId) ||
                 const DeepCollectionEquality()
                     .equals(other.productId, productId)) &&
@@ -6820,6 +6937,15 @@ class ApiValidatedSubscription {
             (identical(other.expiryTime, expiryTime) ||
                 const DeepCollectionEquality()
                     .equals(other.expiryTime, expiryTime)) &&
+            (identical(other.refundTime, refundTime) ||
+                const DeepCollectionEquality()
+                    .equals(other.refundTime, refundTime)) &&
+            (identical(other.providerResponse, providerResponse) ||
+                const DeepCollectionEquality()
+                    .equals(other.providerResponse, providerResponse)) &&
+            (identical(other.providerNotification, providerNotification) ||
+                const DeepCollectionEquality().equals(
+                    other.providerNotification, providerNotification)) &&
             (identical(other.active, active) ||
                 const DeepCollectionEquality().equals(other.active, active)));
   }
@@ -6829,6 +6955,7 @@ class ApiValidatedSubscription {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(userId) ^
       const DeepCollectionEquality().hash(productId) ^
       const DeepCollectionEquality().hash(originalTransactionId) ^
       const DeepCollectionEquality().hash(store) ^
@@ -6837,13 +6964,17 @@ class ApiValidatedSubscription {
       const DeepCollectionEquality().hash(updateTime) ^
       const DeepCollectionEquality().hash(environment) ^
       const DeepCollectionEquality().hash(expiryTime) ^
+      const DeepCollectionEquality().hash(refundTime) ^
+      const DeepCollectionEquality().hash(providerResponse) ^
+      const DeepCollectionEquality().hash(providerNotification) ^
       const DeepCollectionEquality().hash(active) ^
       runtimeType.hashCode;
 }
 
 extension $ApiValidatedSubscriptionExtension on ApiValidatedSubscription {
   ApiValidatedSubscription copyWith(
-      {String? productId,
+      {String? userId,
+      String? productId,
       String? originalTransactionId,
       enums.ApiStoreProvider? store,
       DateTime? purchaseTime,
@@ -6851,8 +6982,12 @@ extension $ApiValidatedSubscriptionExtension on ApiValidatedSubscription {
       DateTime? updateTime,
       enums.ApiStoreEnvironment? environment,
       DateTime? expiryTime,
+      DateTime? refundTime,
+      String? providerResponse,
+      String? providerNotification,
       bool? active}) {
     return ApiValidatedSubscription(
+        userId: userId ?? this.userId,
         productId: productId ?? this.productId,
         originalTransactionId:
             originalTransactionId ?? this.originalTransactionId,
@@ -6862,11 +6997,15 @@ extension $ApiValidatedSubscriptionExtension on ApiValidatedSubscription {
         updateTime: updateTime ?? this.updateTime,
         environment: environment ?? this.environment,
         expiryTime: expiryTime ?? this.expiryTime,
+        refundTime: refundTime ?? this.refundTime,
+        providerResponse: providerResponse ?? this.providerResponse,
+        providerNotification: providerNotification ?? this.providerNotification,
         active: active ?? this.active);
   }
 
   ApiValidatedSubscription copyWithWrapped(
-      {Wrapped<String?>? productId,
+      {Wrapped<String?>? userId,
+      Wrapped<String?>? productId,
       Wrapped<String?>? originalTransactionId,
       Wrapped<enums.ApiStoreProvider?>? store,
       Wrapped<DateTime?>? purchaseTime,
@@ -6874,8 +7013,12 @@ extension $ApiValidatedSubscriptionExtension on ApiValidatedSubscription {
       Wrapped<DateTime?>? updateTime,
       Wrapped<enums.ApiStoreEnvironment?>? environment,
       Wrapped<DateTime?>? expiryTime,
+      Wrapped<DateTime?>? refundTime,
+      Wrapped<String?>? providerResponse,
+      Wrapped<String?>? providerNotification,
       Wrapped<bool?>? active}) {
     return ApiValidatedSubscription(
+        userId: (userId != null ? userId.value : this.userId),
         productId: (productId != null ? productId.value : this.productId),
         originalTransactionId: (originalTransactionId != null
             ? originalTransactionId.value
@@ -6888,6 +7031,13 @@ extension $ApiValidatedSubscriptionExtension on ApiValidatedSubscription {
         environment:
             (environment != null ? environment.value : this.environment),
         expiryTime: (expiryTime != null ? expiryTime.value : this.expiryTime),
+        refundTime: (refundTime != null ? refundTime.value : this.refundTime),
+        providerResponse: (providerResponse != null
+            ? providerResponse.value
+            : this.providerResponse),
+        providerNotification: (providerNotification != null
+            ? providerNotification.value
+            : this.providerNotification),
         active: (active != null ? active.value : this.active));
   }
 }
