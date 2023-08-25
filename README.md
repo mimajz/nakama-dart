@@ -8,6 +8,7 @@ This is a Flutter client for Nakama written in pure Dart and supports cross plat
 ![GitHub last commit](https://img.shields.io/github/last-commit/heroiclabs/nakama-dart?style=flat-square)
 ![Pub Version](https://img.shields.io/pub/v/nakama?style=flat-square)
 
+---
 ## 🚀 Getting Started
 
 You'll need to setup the server and database before you can connect with the client. The simplest way is to use [Docker](https://heroiclabs.com/docs/nakama/getting-started/install/docker/) but have a look at the [server documentation](https://heroiclabs.com/docs/nakama/getting-started/install/) for other options.
